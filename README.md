@@ -5,7 +5,14 @@ A modern, fast, and feature-rich desktop application to download videos and audi
 > **Architected & Developed by:** **Mr. Dipendu Das**  
 > **Edition:** Version 1.0 - Standard edition
 
----
+<img width="972" height="789" alt="Untitled" src="https://github.com/user-attachments/assets/d6903a83-59b7-41e3-9d52-52dc019cb689" />
+
+
+
+
+
+
+
 
 ## ✨ Features
 
@@ -33,6 +40,8 @@ A modern, fast, and feature-rich desktop application to download videos and audi
 
 ## ✨ How the On-Demand Engine Architecture Works
 
+
+
 1. **Ultra-Lightweight Initial Package**:
    - The application package is lean and small because heavy media engines (`yt-dlp` and `ffmpeg.exe`) are **not bundled** inside the download package.
 2. **Automatic First-Run Setup**:
@@ -46,16 +55,10 @@ A modern, fast, and feature-rich desktop application to download videos and audi
 
 ## 🚀 How to Run
 
-### Option 1: Standalone Portable App (.EXE) - Recommended!
-Go to the **`UniversalVideoDownloader-Portable`** folder:
-- Double-click **`UniversalVideoDownloader.exe`**.
-- It runs with **no Python required**.
-- On first launch, it sets up its engines in `core/`. From the second launch onward, it skips the setup popup and opens directly.
+1. Donwload the Setup from Release page
+2. Run it and instal it.
+3.  on first start it may downlaod ffmpeg and yt-dlp
 
-### Option 2: Run via Launcher Script
-Double-click **`run.bat`** in the application directory.
-
-### Option 3: Run via Python Terminal
 ```bash
 python app.py
 ```
