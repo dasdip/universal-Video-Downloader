@@ -89,12 +89,18 @@ def create_windows_shortcut(target_path: str, shortcut_path: str, working_dir: s
         clean_wd = working_dir.replace('"', '""')
         clean_desc = desc.replace('"', '""')
 
+        ico_file = os.path.join(working_dir or os.path.dirname(target_path), "app_icon.ico")
+        if os.path.isfile(ico_file):
+            clean_icon = ico_file.replace('"', '""')
+        else:
+            clean_icon = clean_target
+
         vbs_code = f'''Set ws = CreateObject("WScript.Shell")
 Set sc = ws.CreateShortcut("{clean_sc}")
 sc.TargetPath = "{clean_target}"
 sc.WorkingDirectory = "{clean_wd}"
 sc.Description = "{clean_desc}"
-sc.IconLocation = "{clean_target},0"
+sc.IconLocation = "{clean_icon},0"
 sc.Save
 '''
         with open(vbs_path, "w", encoding="utf-8") as f:
@@ -116,13 +122,14 @@ sc.Save
         clean_sc = shortcut_path.replace('"', '`"')
         clean_wd = working_dir.replace('"', '`"')
         clean_desc = desc.replace('"', '`"')
+        clean_icon = clean_icon.replace('"', '`"')
         ps_script = f'''
 $ws = New-Object -ComObject WScript.Shell
 $s = $ws.CreateShortcut("{clean_sc}")
 $s.TargetPath = "{clean_target}"
 $s.WorkingDirectory = "{clean_wd}"
 $s.Description = "{clean_desc}"
-$s.IconLocation = "{clean_target},0"
+$s.IconLocation = "{clean_icon},0"
 $s.Save()
 '''
         subprocess.run(
@@ -492,6 +499,17 @@ class SetupWizard(ctk.CTk):
             if not os.path.exists(payload_zip):
                 raise FileNotFoundError("Embedded application payload.zip not found in setup package.")
 
+            # Ensure any running instance of the app is closed so files can be cleanly overwritten
+            try:
+                subprocess.run(
+                    ["taskkill", "/F", "/IM", "UniversalVideoDownloader.exe"],
+                    capture_output=True,
+                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+                )
+                time.sleep(0.5)
+            except Exception:
+                pass
+
             self._update_log(f"Destination: {self.install_dir}\n")
             os.makedirs(self.install_dir, exist_ok=True)
 
@@ -537,6 +555,13 @@ class SetupWizard(ctk.CTk):
             uninstaller_bat = create_uninstaller_script(self.install_dir)
             register_in_add_remove_programs(self.install_dir, uninstaller_bat)
             self.after(0, lambda: self._update_log("✓ Registered in Windows Apps & Features.\n"))
+
+            # Notify Windows Shell of updated desktop & start menu icons
+            try:
+                import ctypes
+                ctypes.windll.shell32.SHChangeNotify(0x08000000, 0, None, None)
+            except Exception:
+                pass
 
             time.sleep(0.5)
             self.after(0, lambda: self._show_step(4))
