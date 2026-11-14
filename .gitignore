@@ -1,0 +1,22 @@
+# Build output and large binaries
+build/
+dist/
+UniversalVideoDownloader-Portable/
+payload.zip
+UniversalVideoDownloader_Setup.exe
+test_bmp.ico
+*.spec
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Runtime downloaded dependencies & user downloads
+core/
+downloads/
+config.json
+
+# IDE / Editor configuration
+.vscode/
+.idea/
